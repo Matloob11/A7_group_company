@@ -178,7 +178,7 @@ const fetchNextAgentId = async (): Promise<{
   return {
     error: null,
     nextAgentId: getNextAgentIdFromValues(
-      data.map((agent) => agent.agent_id).filter(Boolean),
+      data.map((agent: any) => agent.agent_id).filter(Boolean),
     ),
   };
 };
@@ -380,7 +380,7 @@ router.get("/admin/list", async (req, res) => {
   const normalizedSearch = search?.toLowerCase();
   const filteredAgents = normalizedSearch
     ? agents.filter(
-        (agent) =>
+        (agent: any) =>
           agent.agent_id.toLowerCase().includes(normalizedSearch) ||
           agent.name.toLowerCase().includes(normalizedSearch),
       )
