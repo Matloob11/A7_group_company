@@ -11,16 +11,26 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
 });
 
-const result = envSchema.safeParse(process.env);
+let envData = {} as z.infer<typeof envSchema>;
 
-if (!result.success) {
-  // Log validation errors but do not throw so the serverless function can start
-  // without Supabase credentials. Missing credentials should be provided via
-  // Vercel Environment Variables for full functionality.
-  console.warn(
-    "Environment validation warnings:",
-    result.error.flatten().fieldErrors,
-  );
+try {
+  const result = envSchema.safeParse(process.env);
+
+  if (!result.success) {
+    // Log validation errors but do not throw so the serverless function can start
+    // without Supabase credentials. Missing credentials should be provided via
+    // Vercel Environment Variables for full functionality.
+    console.warn(
+      "Environment validation warnings:",
+      result.error.flatten().fieldErrors,
+    );
+    envData = envSchema.parse({});
+  } else {
+    envData = result.data;
+  }
+} catch (error) {
+  console.error("Environment parsing failed, falling back to defaults:", error);
+  envData = envSchema.parse({});
 }
 
-export const env = result.success ? result.data : envSchema.parse({});
+export const env = envData;
