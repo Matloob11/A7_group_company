@@ -6,7 +6,8 @@ export default async function handler(
 ) {
   try {
     // Lazy-load application to avoid module-init crashes when env is invalid
-    const mod = await import("../src/app");
+    // Use a non-literal import expression so TypeScript doesn't require a .js extension
+    const mod = await import("../src/app" + "");
     const createApp = mod.createApp as () => any;
     const app = createApp();
 
